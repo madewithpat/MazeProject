@@ -6,8 +6,6 @@ public class Maze {
     private int c;  //y position of the mouse
     private boolean exitFound = false;
 
-    private ArrayList maze = new ArrayList();
-    private ArrayList illegalMoves = new ArrayList();
 
 
 
