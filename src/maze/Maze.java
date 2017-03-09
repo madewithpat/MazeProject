@@ -9,11 +9,13 @@ public class Maze {
     private boolean exitFound = false;
 
 
-    private ArrayList<ArrayList<Object>> formattedMaze = new ArrayList<>();
+    private ArrayList<ArrayList<String>> formattedMaze = new ArrayList<>();
     
     
     private ArrayList<Move> path = new ArrayList<>();
     private ArrayList<Move> illegalMoves = new ArrayList<>();
+    
+    private Move prevPoint;
 
 
     public Maze(int[][] arrMaze) {
@@ -21,9 +23,8 @@ public class Maze {
         this.c = 0;
         this.r = 0;
         
-        
         for (int i = 0; i < arrMaze.length; i++) {
-        	ArrayList<Object> mazeRow = new ArrayList<>();
+        	ArrayList<String> mazeRow = new ArrayList<>();
         	
         	for (int j = 0; j < arrMaze[i].length; j++) {
         		if (arrMaze[i][j] == 1) {
@@ -81,34 +82,30 @@ public class Maze {
         //          move${direction of availableMoves[0]}
     	
     	// Create a collection of coordinate pairs availableMoves
-    	ArrayList<char> availableMoves = new ArrayList<>();
+    	ArrayList<Move> availableMoves = new ArrayList<>();
     	
-    	// indices correspond to direction, 0 = N, 1 = E, etc.
+    	// Fill availableMoves list with values.
     	availableMoves.add(new Move(r - 1, c));
     	availableMoves.add(new Move(r, c + 1));
-    	availableMoves.add(new Move(r + 1, c));    	
+    	availableMoves.add(new Move(r + 1, c));
     	availableMoves.add(new Move(r, c - 1));
-    	
-    	while (availableMoves.contains)
-    	
-    	for (int i = 0; i < availableMoves.size(); i++) {
-    		char test = formattedMaze[availableMoves.get(1).x][availableMoves.get(1).y];
-    		
-    		if (test == "#") {
-    			availableMoves.set(i, null);
+    	    	    	
+    	for (Move temp : availableMoves) {    		
+    		if (temp.value == "#") {
+    			availableMoves.set(availableMoves.indexOf(temp), null);
+//    			availableMoves.remove(availableMoves.indexOf(temp));
     		}
-    		
-    		if (illegalMoves.contains(moves[i])) {
-    			moves[i] = null;
+    		else if (temp.value == "~") {
+//    			availableMoves.remove(availableMoves.indexOf(temp));
+    			availableMoves.set(availableMoves.indexOf(temp), null);
     		}
-    		
-    		if (test == "~") {
-    			moves[i] = null;
+    		else if (temp.isIllegal()) {
+//    			availableMoves.remove(availableMoves.indexOf(temp));
+    			availableMoves.set(availableMoves.indexOf(temp), null);
     		}
     	}
     	
-    
-
+    	
         return isAnExit();
     }
 
@@ -153,13 +150,35 @@ public class Maze {
 
     }
     
-    class Move {
+    class Move implements Comparable<Move>{
     	protected int x;
     	protected int y;
+    	protected String value;
     	
     	protected Move(int x, int y) {
     		this.x = x;
-    		this.y = y;
+    		this.y = y;    		
+    		this.value = formattedMaze.get(x).get(y);
+    	}
+    	
+    	protected Boolean isIllegal() {
+    		for (int i = 0; i < illegalMoves.size(); i++) {
+    			if (this.compareTo(illegalMoves.get(i)) == 0) {
+    				return true;
+    			}
+    		}
+    		return false;
+    	}
+    	
+    	@Override
+    	public int compareTo(Move anotherMove) {
+    		if (anotherMove.x == this.x) {
+    			if (anotherMove.y == this.y) {
+    				return 0;
+    			}
+    		}   
+    		
+    		return 1;
     	}
     }
     
