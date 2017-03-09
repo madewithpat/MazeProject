@@ -111,9 +111,10 @@ public class Maze {
 
     private void moveNorth() {
         //complete the code here
-        // maze[r][c] = '~';
-        // this.r -= 1;
-        // maze[r][c] = '@';
+        formattedMaze.get(r).set(c, "~");
+        movesStack.push(new Move(r, c));
+        r -= 1;
+        formattedMaze.get(r).set(c, "@");
     }
 
     private void moveSouth() {
