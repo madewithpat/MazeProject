@@ -9,14 +9,13 @@ public class Maze {
     private boolean exitFound = false;
 
 
-    private ArrayList<ArrayList<String>> formattedMaze = new ArrayList<>();
+    private ArrayList<ArrayList<String>>theMaze = new ArrayList<>();
     
     
-    private ArrayList<Move> path = new ArrayList<>();
-    private ArrayList<Move> illegalMoves = new ArrayList<>();
+    private ArrayList<ArrayList<String>> thePath = new ArrayList<>();
+    private ArrayList<MazePoint> illegalMoves = new ArrayList<>();
+    private MazePointStack moves = new MazePointStack();
     
-    private Move prevPoint;
-
 
     public Maze(int[][] arrMaze) {
         this.direction = 'n';
@@ -35,73 +34,80 @@ public class Maze {
         		}
         	}
         	
-        	this.formattedMaze.add(mazeRow);
+        	this.theMaze.add(mazeRow);
+        	this.thePath.add(mazeRow);
         }
      }
 
     //Prints out the maze without solution
     public void displayMaze() {
-    	for (int i = 0; i < this.formattedMaze.size(); i++) {
-    		System.out.print("\n" + this.formattedMaze.get(i).toString());
-    	}
-    	
-    	formattedMaze.forEach
+    	for (int i = 0; i < theMaze.size(); i++) {
+    		for (int j = 0; j < theMaze.get(i).size(); j++) {
+    			System.out.print(theMaze.get(i).get(j));
+    		}
+    		System.out.println();
+    	}    	
     }
 
     //displays the Maze with the path taken
     public void displayPath() {
     	
-    	//arrMaze[this.r][this.c] = '@';
-
     }
 
 
     public boolean takeStep() {
         //complete the code here
-        
-        // Iterate through availableMoves
-        //      if (availableMoves[i] == '~') {
-        //          temp = availableMoves[0];
-        //          availableMoves[0] = availableMoves[i];
-        //          availableMoves[i] = temp;
-        //      }
-        //      else if (availableMoves[i] == '#') {
-        //          availableMoves.remove(availableMoves[i]);
-        //      }
-        //      else {
-        //          if (illegalMoves.contains(availableMoves[i])) {
-        //              availableMoves.remove(availableMoves[i]);
-        //          }
-        //      }
-
-        // Check availableMoves.size() > 1
-        //      if true, move to availableMoves[1]
-        //      if false
-        //          illegalMoves.add(currentPosition);
-        //          currentPosition = ' ';
-        //          move${direction of availableMoves[0]}
-    	
+            	
     	// Create a collection of coordinate pairs availableMoves
-    	ArrayList<Move> availableMoves = new ArrayList<>();
+    	ArrayList<MazePoint> availableMoves = new ArrayList<>();
     	
     	// Fill availableMoves list with values.
-    	availableMoves.add(new Move(r - 1, c));
-    	availableMoves.add(new Move(r, c + 1));
-    	availableMoves.add(new Move(r + 1, c));
-    	availableMoves.add(new Move(r, c - 1));
+    	availableMoves.add(new MazePoint(r - 1, c));
+    	availableMoves.add(new MazePoint(r, c + 1));
+    	availableMoves.add(new MazePoint(r + 1, c));
+    	availableMoves.add(new MazePoint(r, c - 1));
     	    	    	
-    	for (Move temp : availableMoves) {    		
+    	for (MazePoint temp : availableMoves) {    		
     		if (temp.value == "#") {
-    			availableMoves.set(availableMoves.indexOf(temp), null);
-//    			availableMoves.remove(availableMoves.indexOf(temp));
+//    			availableMoves.set(availableMoves.indexOf(temp), null);
+    			availableMoves.remove(availableMoves.indexOf(temp));
     		}
     		else if (temp.value == "~") {
-//    			availableMoves.remove(availableMoves.indexOf(temp));
-    			availableMoves.set(availableMoves.indexOf(temp), null);
+    			availableMoves.remove(availableMoves.indexOf(temp));
+//    			availableMoves.set(availableMoves.indexOf(temp), null);
     		}
     		else if (temp.isIllegal()) {
-//    			availableMoves.remove(availableMoves.indexOf(temp));
-    			availableMoves.set(availableMoves.indexOf(temp), null);
+    			availableMoves.remove(availableMoves.indexOf(temp));
+//    			availableMoves.set(availableMoves.indexOf(temp), null);
+    		}
+    	}
+    	
+    	if (availableMoves.size() == 0) {
+    		MazePoint prev = moves.peek();
+    		illegalMoves.add(new MazePoint(r, c));
+    		
+    		switch (this.r - prev.x) {
+    		case (1):
+    			direction = 'n';
+    			break;
+    		case (-1):
+    			direction = 's';
+    			break;
+    		case (0):
+    			if (c > prev.y) {
+    				direction = 'w';
+    			}
+    			else if (c < prev.y) {
+    				direction = 'e';
+    			}
+    			break;
+    		}
+    	}
+    	else {
+    		MazePoint next = availableMoves.get(0);
+    		
+    		switch (this.r - next.x) {
+    		case (1)
     		}
     	}
     	
@@ -111,10 +117,10 @@ public class Maze {
 
     private void moveNorth() {
         //complete the code here
-        formattedMaze.get(r).set(c, "~");
-        movesStack.push(new Move(r, c));
+        thePath.get(r).set(c, "~");
+        moves.push(new MazePoint(r, c));
         r -= 1;
-        formattedMaze.get(r).set(c, "@");
+        thePath.get(r).set(c, "@");
     }
 
     private void moveSouth() {
@@ -151,12 +157,12 @@ public class Maze {
 
     }
     
-    class Move implements Comparable<Move>{
+    class MazePoint implements Comparable<Move>{
     	protected int x;
     	protected int y;
     	protected String value;
     	
-    	protected Move(int x, int y) {
+    	protected MazePoint(int x, int y) {
     		this.x = x;
     		this.y = y;    		
     		this.value = formattedMaze.get(x).get(y);
@@ -172,9 +178,9 @@ public class Maze {
     	}
     	
     	@Override
-    	public int compareTo(Move anotherMove) {
-    		if (anotherMove.x == this.x) {
-    			if (anotherMove.y == this.y) {
+    	public int compareTo(MazePoint point) {
+    		if (point.x == this.x) {
+    			if (point.y == this.y) {
     				return 0;
     			}
     		}   
@@ -183,8 +189,35 @@ public class Maze {
     	}
     }
     
-//    class Stack {
-//    	private ArrayList<Object> list = new ArrayList<>();
-//    	
-//    }
+    class MazePointStack {
+    	private ArrayList<MazePoint> list = new ArrayList<>();
+    	
+    	public Boolean isEmpty() {
+    		return list.size() < 1;
+    	}
+    	
+    	public void push(MazePoint move) {
+    		list.add(move);
+    	}
+    	
+    	public MazePoint peek() {
+    		return list.get(list.size() - 1);
+    	}
+    	
+    	public MazePoint pop() {
+    		MazePoint popped = this.peek();
+    		list.remove(popped);
+    		
+    		return popped;
+    	}
+    	
+    	public int size() {
+    		return list.size();
+    	}
+    	
+    	public ArrayList<MazePoint> getStack() {
+    		return this.list;
+    	}
+    	
+    }
 }
