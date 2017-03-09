@@ -157,7 +157,7 @@ public class Maze {
 
     }
     
-    class MazePoint implements Comparable<Move>{
+    class MazePoint implements Comparable<MazePoint>{
     	protected int x;
     	protected int y;
     	protected String value;
@@ -165,7 +165,7 @@ public class Maze {
     	protected MazePoint(int x, int y) {
     		this.x = x;
     		this.y = y;    		
-    		this.value = formattedMaze.get(x).get(y);
+    		this.value = theMaze.get(x).get(y);
     	}
     	
     	protected Boolean isIllegal() {
