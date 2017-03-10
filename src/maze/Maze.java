@@ -172,7 +172,8 @@ public class Maze {
     		}
     		// Remove MazePoints that have been marked as illegal
     		else if (list.get(i).isIllegal()) {
-    			list.remove(i--);
+    			list.remove(i);
+    			i--;
     		}
     	}
     }
@@ -238,6 +239,9 @@ public class Maze {
     		return false;
     	}
     	
+    	// The try/catch block here handles IndexOutOfBoundsExceptions
+    	// which are thrown when the current position is at the beginning or end of a row or column
+    	
     	protected void setValue() {
     		try {
     			this.value = thePath.get(this.x).get(this.y);
@@ -292,7 +296,7 @@ public class Maze {
     	}
     	
     	public MazePoint pop() {
-    		MazePoint popped = this.peek();
+    		MazePoint popped = peek();
     		list.remove(popped);
     		
     		return popped;
