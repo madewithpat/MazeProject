@@ -92,6 +92,8 @@ public class Maze {
     		nextMove = availableMoves.get(0);
     		// Then push the nextMove onto our stack of stepsTaken
     		stepsTaken.push(nextMove);
+    		// Set the current position to a "~"
+    		thePath.get(r).set(c, "~");
     	}
     	else {
     		// If there are no remaining moves, pop the previous move off the top of stepsTaken
@@ -105,6 +107,8 @@ public class Maze {
     		 * this allows us to use one switch statement to call a move method
     		 */
     		nextMove.invertDirection();
+    		// Set the current position back to a blank space, since we're backtracking
+    		thePath.get(r).set(c, " ");
     	}
     	
     	// Select direction to move based on nextMove
@@ -167,21 +171,21 @@ public class Maze {
         
     private void moveNorth() {
         //complete the code here
-        thePath.get(r).set(c, "~");
         r -= 1;
         thePath.get(r).set(c, "@");
     }
 
     private void moveSouth() {
         //complete the code here
-        // maze[r][c] = '~';
-        // this.r += 1;
-        // maze[r][c] = '@';
+    	this.r += 1;
+    	thePath.get(r).set(c, "@");
     }
 
     private void moveEast() {
         //complete the code here
         // maze[r][c] = '~';
+    	this.c += 1;
+    	thePath.get(r).set(c,  "@");
         // this.c += 1;
         // maze[r][c] = '@';
     }
