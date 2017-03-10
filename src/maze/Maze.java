@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Maze {
 	private char direction; //'n','e','w','s'
-    private int r;  // x position of the mouse
-    private int c;  //y position of the mouse
+    private int r;  // y position of the mouse
+    private int c;  // x position of the mouse
     private boolean exitFound = false;
 
     private ArrayList<ArrayList<String>>theMaze = new ArrayList<>(); // Formatted maze    
@@ -17,8 +17,8 @@ public class Maze {
 
     public Maze(int[][] arrMaze) {
         this.direction = 'n';
+        this.r = arrMaze.length - 1;
         this.c = 0;
-        this.r = 0;
         
         for (int i = 0; i < arrMaze.length; i++) {
         	ArrayList<String> mazeRow = new ArrayList<>();
@@ -49,7 +49,13 @@ public class Maze {
 
     //displays the Maze with the path taken
     public void displayPath() {
-    	
+    	for (ArrayList<String> row : thePath) {
+    		for (String point : row) {
+    			System.out.print(point);
+    		}
+    		System.out.println();
+    	}
+    	System.out.println();
     }
 
 
@@ -126,7 +132,10 @@ public class Maze {
     		moveWest();
     		break;
     	}    			
-    		    	
+    	
+    	// After the move is made, we display the path again (per original spec)
+    	this.displayPath();
+    	
         return isAnExit();
     }
     
@@ -156,15 +165,14 @@ public class Maze {
     }
     
     private void filterMoves(ArrayList<MazePoint> list) {
-    	for (MazePoint temp : list) {    		
-    		if (temp.value == "#") {
-    			list.remove(list.indexOf(temp));
+    	for (int i = 0; i < list.size(); i++) {
+    		// Remove MazePoints that represent characters we can't move to
+    		if (list.get(i).value == "#" || list.get(i).value == "~") {
+    			list.remove(i--);
     		}
-    		else if (temp.value == "~") {
-    			list.remove(list.indexOf(temp));
-    		}
-    		else if (temp.isIllegal()) {
-    			list.remove(list.indexOf(temp));
+    		// Remove MazePoints that have been marked as illegal
+    		else if (list.get(i).isIllegal()) {
+    			list.remove(i--);
     		}
     	}
     }
@@ -183,31 +191,29 @@ public class Maze {
 
     private void moveEast() {
         //complete the code here
-        // maze[r][c] = '~';
     	this.c += 1;
     	thePath.get(r).set(c,  "@");
-        // this.c += 1;
-        // maze[r][c] = '@';
     }
 
     private void moveWest() {
         //complete the code here
-        // maze[r][c] = '~';
-        // this.c -= 1;
-        // maze[r][c] = '@';
+    	this.c -= 1;
+    	thePath.get(r).set(c,  "@");
     }
 
 
     private boolean isAnExit() {
         //complete the code here
-        //exitFound = this.r == ( maze.size() - 1 ) || this.r == 0 || this.c == 0;
-        return exitFound;
+        this.exitFound = this.c == theMaze.get(r).size() - 1;
+        return this.exitFound;
     }
 
     //finds the path without stopping at every step
     public void findExit() {
         //complete the code here
-
+    	while (!this.exitFound) {
+    		this.takeStep();
+    	}
     }
     
     class MazePoint implements Comparable<MazePoint>{
@@ -216,11 +222,11 @@ public class Maze {
     	protected char direction;
     	protected String value;
     	
-    	protected MazePoint(int x, int y, char direction) {
+    	MazePoint(int x, int y, char direction) {
     		this.x = x;
     		this.y = y;   
     		this.direction = direction;
-    		this.value = theMaze.get(x).get(y);
+    		setValue();
     	}
     	
     	protected Boolean isIllegal() {
@@ -230,6 +236,15 @@ public class Maze {
     			}
     		}
     		return false;
+    	}
+    	
+    	protected void setValue() {
+    		try {
+    			this.value = thePath.get(this.x).get(this.y);
+    		}
+    		catch (IndexOutOfBoundsException ex) {
+    			this.value = "#";
+    		}
     	}
     	
     	protected void invertDirection() {
