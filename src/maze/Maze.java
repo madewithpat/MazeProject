@@ -172,8 +172,7 @@ public class Maze {
     		}
     		// Remove MazePoints that have been marked as illegal
     		else if (list.get(i).isIllegal()) {
-    			list.remove(i);
-    			i--;
+    			list.remove(i--);
     		}
     	}
     }
