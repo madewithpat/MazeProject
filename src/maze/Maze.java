@@ -8,8 +8,7 @@ public class Maze {
     private int c;  // x position of the mouse
     private boolean exitFound = false;
 
-    private ArrayList<ArrayList<String>>theMaze = new ArrayList<>(); // Formatted maze    
-    
+    private ArrayList<ArrayList<String>>theMaze = new ArrayList<>(); // Formatted maze        
     private ArrayList<ArrayList<String>> thePath = new ArrayList<>(); // Formatted maze with path
     private ArrayList<MazePoint> illegalMoves = new ArrayList<>(); // Persistent list of invalid moves
     private MazePointStack stepsTaken = new MazePointStack(); // List of correct moves taken
@@ -181,24 +180,28 @@ public class Maze {
         //complete the code here
         r -= 1;
         thePath.get(r).set(c, "@");
+        this.direction = 'n';
     }
 
     private void moveSouth() {
         //complete the code here
     	this.r += 1;
     	thePath.get(r).set(c, "@");
+    	this.direction = 's';
     }
 
     private void moveEast() {
         //complete the code here
     	this.c += 1;
     	thePath.get(r).set(c,  "@");
+    	this.direction = 'e';
     }
 
     private void moveWest() {
         //complete the code here
     	this.c -= 1;
     	thePath.get(r).set(c,  "@");
+    	this.direction = 'w';
     }
 
 
